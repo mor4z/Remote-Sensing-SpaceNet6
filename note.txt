@@ -1,0 +1,5 @@
+Prima di iniziare a lavorare, ricorda di attivare ogni volta l'ambiente virtuale Python creato. Una volta aperto VSCode, assicurati di trovarti nella cartella del progetto ed esegui il seguente comando da terminale:
+
+source ./.venv/bin/activate
+
+Una volta eseguito il comando, sarà attivato l'ambiente virtuale Python con cui lavorare,
