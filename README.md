@@ -4,7 +4,8 @@ Repository per il progetto del corso "Laboratorio di Intelligenza Artificiale" t
 
 ## Procedura di lavoro da seguire
 
-### 1. Scaricare il dataset
+### 1. Preparazione del dataset
+- Preparare le maschere che saranno le ground truth dell'addestramento. Convertire le label contenute nei file .geojson in maschere binarie in formato .tiff, come suggerito dal tutor.
 - Creare una classe dataset per caricare i dati
 - Suddividere il dataset in training, validation e test set (80%, 10%, 10%).
 - Salvare i percorsi delle immagini e delle label in 3 diversi file .txt per tenerne traccia. Vanno usate sempre le stesse suddivisioni.

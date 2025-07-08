@@ -8,9 +8,8 @@ import time
 
 def preprocess_spacenet6_data(base_data_path):
     """
-    Pre-elabora i dati SpaceNet 6 rasterizzando i file GeoJSON in maschere binarie.
-    Le maschere rasterizzate verranno salvate nella sottocartella 'rasterized_masks'
-    all'interno di base_data_path.
+    Pre-processamento dei dati rasterizzando i file GeoJSON in maschere binarie.
+    Le maschere rasterizzate verranno salvate dentro 'rasterized_masks' all'interno di base_data_path.
     """
     sar_intensity_dir = os.path.join(base_data_path, 'SAR-Intensity')
     geojson_buildings_dir = os.path.join(base_data_path, 'geojson_buildings')
