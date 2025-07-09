@@ -44,24 +44,14 @@ class SpaceNet6Dataset(Dataset):
         return len(self.image_ids)
 
     def __getitem__(self, idx):
-        # ... (il resto del metodo __getitem__ è corretto) ...
-        img_id = self.image_ids[idx]
+        image = rasterio.open(self.img_dir[idx]).read().transpose(1,2,0).astype(np.float32)
+        mask = rasterio.open(self.msk_dir[idx]).read().transpose(1,2,0).astype(np.float32)
+        mask[mask == 255.0] = 1.0
 
-        sar_filename = f"{img_id}.tif"
-        mask_filename = f"{img_id}.tif" 
-
-        sar_path = os.path.join(self.sar_intensity_dir, sar_filename)
-        mask_path = os.path.join(self.rasterized_masks_dir, mask_filename)
-
-        with rasterio.open(sar_path) as src_sar:
-            image_np = src_sar.read().astype(np.float32) 
-            image_tensor = torch.from_numpy(image_np) 
-
-        with rasterio.open(mask_path) as src_mask:
-            mask_np = src_mask.read(1).astype(np.float32) 
-            mask_tensor = self.to_tensor(Image.fromarray(mask_np.astype(np.uint8)))
-
-        if self.transform:
-            image_tensor = self.transform(image_tensor)
-
-        return image_tensor, mask_tensor.squeeze(0)
+        if self.transform is not None:
+            transforms = self.transform(image=image, mask=mask)
+            image = transforms['image']
+            mask = transforms['mask']
+        image = image.transpose(2,0,1)
+        mask = mask.transpose(2,0,1)
+        return image, mask

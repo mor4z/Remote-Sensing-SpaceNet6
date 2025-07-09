@@ -18,6 +18,7 @@ Suggerimento del tutor: ci sono dei file di troppo, utilizza solo i file goejson
 Suggerimento del tutor: prima del training settare il seed per migliorare la riproducibilità.
 
 ### 3. Addestramento della rete neurale
+- Scegliere la funzione di Loss
 I training che da eseguire sono almeno i seguenti:
 - Baseline (prova diversi learning rate su scala logaritmica, e.g. 1e-2, 1e-3, 1e-4, 1e-5, una volta individuato il migliore passa al punto successivo).
 - Aggiunta di data augmentation (per esempio random horizontal/vertical flip, rotazioni di 0/90/180/270 gradi). Come libreria usare Albumentations.
