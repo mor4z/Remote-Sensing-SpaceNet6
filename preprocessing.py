@@ -5,6 +5,9 @@ import fiona
 from shapely.geometry import shape
 import numpy as np
 import time
+import random 
+import numpy as np 
+import torch 
 
 def preprocess_spacenet6_data(base_data_path):
     """
@@ -88,3 +91,12 @@ def preprocess_spacenet6_data(base_data_path):
             continue
 
     print("Rasterizzazione completata!")
+
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available(): # check sulla GPU
+        torch.cuda.manual_seed_all(seed) 
+    print(f"Seed impostato su {seed} per la riproducibilità.")
