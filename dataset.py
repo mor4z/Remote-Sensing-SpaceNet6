@@ -1,47 +1,37 @@
-# Remote-Sensing-SpaceNet6/dataset.py
-
-import os
-import rasterio
-import torch
 import numpy as np
-from torch.utils.data import Dataset
-from torchvision import transforms
-from PIL import Image
+import os
+import torch.utils.data as data
+import rasterio
 
-class SpaceNet6Dataset(Dataset):
-    # QUESTA RIGA DEVE INCLUDERE 'image_ids_list=None'
-    def __init__(self, base_data_path, image_ids_list=None, transform=None): 
-        """
-        Inizializza il dataset SpaceNet 6.
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
-        Args:
-            base_data_path (str): Il percorso alla cartella 'AOI_11_Rotterdam'.
-            image_ids_list (list, optional): Lista degli ID delle immagini da includere in questo dataset.
-                                             Se None, carica tutti gli ID dalla cartella SAR-Intensity.
-            transform (callable, optional): Trasformazioni aggiuntive da applicare.
-        """
-        self.sar_intensity_dir = os.path.join(base_data_path, 'SAR-Intensity')
-        self.rasterized_masks_dir = os.path.join(base_data_path, 'rasterized_masks')
-        self.transform = transform 
+class SN6Dataset(data.Dataset):
 
-        if image_ids_list is not None:
-            self.image_ids = image_ids_list
-        else:
-            self.image_ids = [
-                os.path.splitext(f)[0]
-                for f in os.listdir(self.sar_intensity_dir)
-                if f.endswith('.tif') and os.path.isfile(os.path.join(self.sar_intensity_dir, f)) 
-            ]
+    def __init__(self,
+                root_dir = None, 
+                split = "train",
+                transform = None,
+                dtype = "PS-RGB"):
+        assert(split in ["train", "val", "test"] and "error with split")
+        self.root_dir = root_dir
+        self.split = split
+        self.dtype = dtype
+        self.transform = transform
+        self.img_dir = []
+        self.lbl_dir = []
+        self.msk_dir = []
 
-        if not self.image_ids:
-            raise RuntimeError(f"Nessun ID immagine valido trovato o fornito per il dataset in {self.sar_intensity_dir}.")
+        split_file = open(os.path.join(root_dir,f"{split}.txt"), "r")
+        for line in split_file:
+            self.img_dir.append(line.strip())
+            self.msk_dir.append(line.strip().replace(f"/{dtype}/", "/masks/").replace(".tif", ".png"))
+            self.lbl_dir.append(line.strip().replace(f"/{dtype}/", "/geojson_buildings/").replace(f"{dtype}","Buildings").replace(".tif", ".geojson"))
+        split_file.close()
 
-        print(f"Dataset inizializzato con {len(self.image_ids)} coppie immagine-maschera.")
-
-        self.to_tensor = transforms.ToTensor() 
 
     def __len__(self):
-        return len(self.image_ids)
+        return len(self.img_dir)
 
     def __getitem__(self, idx):
         image = rasterio.open(self.img_dir[idx]).read().transpose(1,2,0).astype(np.float32)
