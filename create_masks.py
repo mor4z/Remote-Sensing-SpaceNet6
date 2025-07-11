@@ -59,7 +59,7 @@ def geojson_to_mask(image, geojson_path):
 def get_coords(transform, coords):
     new_coords = []
     for coord in coords:
-        print(coord)
+        # print(coord)
         x, y = coord[:2]
         px, py = ~transform * (x, y)
         new_coords.append((int(px), int(py)))

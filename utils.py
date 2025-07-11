@@ -11,9 +11,6 @@ from shapely.geometry import shape
 import tqdm
 
 def save_ids_to_file(ids_list, filename, output_dir='./'):
-    """
-    Salva una lista di ID in un file di testo, uno per riga.
-    """
     filepath = os.path.join(output_dir, filename)
     with open(filepath, 'w') as f:
         for img_id in ids_list:
@@ -78,7 +75,7 @@ def get_mean_std(path_to_train_data):
     return mean, std
 
 def visualize_image(image, mask, prediction = None, save_path = None):
-    # Visualize the image and mask
+    # Funzione che stampa l'immagine e la maschera
     image = np.array(image).transpose(1,2,0)
     mask = np.array(mask).squeeze()
     plt.figure(figsize=(10, 10))
@@ -88,19 +85,19 @@ def visualize_image(image, mask, prediction = None, save_path = None):
         plt.subplot(1, 2, 1)
     plt.imshow(image)
     plt.axis('off')
-    plt.title("Image")
+    plt.title("Imamgine")
     if(prediction is not None):
         plt.subplot(1, 3, 2)
     else:
         plt.subplot(1, 2, 2)
     plt.imshow(mask, cmap='gray')
     plt.axis('off')
-    plt.title("Mask")
+    plt.title("Maschera")
     if(prediction is not None):
         plt.subplot(1, 3, 3)
         plt.imshow(prediction, cmap='gray')
         plt.axis('off')
-        plt.title("Prediction")
+        plt.title("Predizione")
     if(save_path is not None):
         plt.savefig(save_path)
     plt.show()
@@ -114,7 +111,7 @@ def set_seed(seed):
     random.seed(seed)
 
 def get_evals(data_loader, model, criterion, device, save_predictions=False, output_path=None):
-    # Get the accuracy, precision, recall, and F1 score of the model
+    # Funzione che calcola accuracy, precision, recall, e F1 score di un modello
     true_positives = 0
     false_positives = 0
     false_negatives = 0
@@ -125,7 +122,7 @@ def get_evals(data_loader, model, criterion, device, save_predictions=False, out
     if(save_predictions):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
-        print("Saving predictions to:", output_path)
+        print("Predizioni salvate in:", output_path)
     with torch.no_grad():
         for idx, (data, mask) in enumerate(data_loader):
             data = data.to(device)
@@ -154,11 +151,11 @@ def get_evals(data_loader, model, criterion, device, save_predictions=False, out
     return total_loss/num_batches, precision.item(), recall.item(), f1.item(), accuracy.item()
 
 def save_checkpoint(state, filename="model_checkpoint.pth"):
-    print("saving checkpoint")
+    print("Salvataggio del checkpoint")
     torch.save(state, filename)
 
 def load_checkpoint(name, model = None, optimizer = None, criterion = None):
-    print("loading checkpoint")
+    print("Caricamento del checkpoint")
     checkpoint = torch.load(name)
     if model is not None:
         model.load_state_dict(checkpoint['state_dict'])
@@ -179,11 +176,11 @@ def get_random_image(data_loader, model, device):
 
 
 if __name__ == "__main__":
-    print("Calculating the mean and standard deviation of the dataset")
+    print("Calcolo della media e della deviazione standard del dataset")
 
     script_directory = os.path.dirname(os.path.abspath(__file__))
     print(f"La cartella dello script è: {script_directory}")
 
-    mean, std = get_mean_std("Remote-Sensing-SpaceNet6/train.txt")
+    mean, std = get_mean_std("split/train.txt")
     print("Mean:", mean)
     print("Standard Deviation:", std)
