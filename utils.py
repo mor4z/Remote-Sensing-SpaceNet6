@@ -175,12 +175,12 @@ def get_random_image(data_loader, model, device):
         return data[idx], mask[idx], pred[idx]
 
 
-if __name__ == "__main__":
-    print("Calcolo della media e della deviazione standard del dataset")
-
-    script_directory = os.path.dirname(os.path.abspath(__file__))
-    print(f"La cartella dello script è: {script_directory}")
-
-    mean, std = get_mean_std("split/train.txt")
-    print("Mean:", mean)
-    print("Standard Deviation:", std)
+# if __name__ == "__main__":
+#     print("Calcolo della media e della deviazione standard del dataset")
+# 
+#     script_directory = os.path.dirname(os.path.abspath(__file__))
+#     print(f"La cartella dello script è: {script_directory}")
+# 
+#     mean, std = get_mean_std("split/train.txt")
+#     print("Mean:", mean)
+#     print("Standard Deviation:", std)

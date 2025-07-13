@@ -1,7 +1,8 @@
 import torch
 import dataset as dataset
 from tqdm import tqdm
-        
+
+# Presa dal video di riferimento sulla UNET     
 def train(train_loader, model, optimizer, criterion, scaler, scheduler, device):
     model.train()
 

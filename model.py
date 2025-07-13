@@ -103,5 +103,5 @@ def test():
 
 
 # Questo blocco viene eseguito solo se il file model.py viene eseguito direttamente
-if __name__ == "__main__":
-    test()
+# if __name__ == "__main__":
+#     test()

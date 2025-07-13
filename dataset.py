@@ -6,7 +6,7 @@ import rasterio
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
-class SN6Dataset(data.Dataset):
+class SpaceNet6Dataset(data.Dataset):
 
     def __init__(self,
                 root_dir = None, 
