@@ -140,8 +140,8 @@ def get_evals(data_loader, model, criterion, device, save_predictions=False, out
             false_negatives += ((pred == 0) & (mask == 1)).sum()
             true_negatives += ((pred == 0) & (mask == 0)).sum()
             if save_predictions and idx % 10 == 0:
-                torchvision.utils.save_image(pred.unsqueeze(dim=1), os.path.join(output_path, f"{idx} - predictions.png"))
-                torchvision.utils.save_image(mask.unsqueeze(dim=1), os.path.join(output_path, f"{idx} - masks.png"))
+                torchvision.utils.save_image(pred.unsqueeze(dim=1), os.path.join(output_path, f"{idx}_predictions.png"))
+                torchvision.utils.save_image(mask.unsqueeze(dim=1), os.path.join(output_path, f"{idx}_masks.png"))
     
     accuracy = (true_positives + true_negatives) / (true_positives + true_negatives + false_positives + false_negatives + 1e-8)
     precision = true_positives / (true_positives + false_positives + 1e-8)
