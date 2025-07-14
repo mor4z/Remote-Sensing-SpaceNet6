@@ -38,19 +38,15 @@ def preprocess_spacenet6_data(base_data_path):
 
     print(f"Trovati {total_files} file SAR. Inizio la rasterizzazione...")
 
-    # Rimuovi processed_count e start_time, saranno gestiti da tqdm
 
-    # Sostituisci il ciclo for con tqdm
     for sar_filename in tqdm.tqdm(sar_files, desc='Rasterizzazione maschere'):
         sar_base_name = os.path.splitext(sar_filename)[0]
-        # Assicurati che '_SAR-Intensity' sia presente nel nome base prima di rimpiazzare
+        
         if '_SAR-Intensity' in sar_base_name:
             geojson_base_name = sar_base_name.replace('_SAR-Intensity', '_Buildings')
         else:
-            # Gestisci il caso in cui il suffisso non sia presente (o adatta se il nome Buildings è diverso)
             geojson_base_name = sar_base_name + '_Buildings' # Esempio: aggiunge _Buildings se non trova SAR-Intensity
-            # Potresti voler mettere un warning qui o gestire in modo più specifico
-            # print(f"Attenzione: '{sar_base_name}' non contiene '_SAR-Intensity'. Assumendo '{geojson_base_name}' per GeoJSON.")
+           
 
         geojson_filename = f"{geojson_base_name}.geojson"
         
@@ -58,11 +54,7 @@ def preprocess_spacenet6_data(base_data_path):
         geojson_path = os.path.join(geojson_buildings_dir, geojson_filename)
         output_mask_path = os.path.join(output_masks_dir, f"{sar_base_name}.tif") # Il formato output desiderato è .tif
 
-        # Rimuovi il blocco di stampa condizionale, tqdm lo gestisce
-        # if processed_count % 100 == 0 or processed_count == 1 or processed_count == total_files:
-        #     elapsed_time = time.time() - start_time
-        #     print(f"Processing {processed_count}/{total_files} files. Elapsed time: {elapsed_time:.2f} seconds.")
-
+       
         try:
             # Apre l'immagine SAR per ottenere le sue proprietà georeferenziate
             with rasterio.open(sar_path) as src:
@@ -109,7 +101,6 @@ def preprocess_spacenet6_data(base_data_path):
                 dst.write(mask, 1) # Scrivi la maschera nel primo canale
 
         except Exception as e:
-            # Usa tqdm.tqdm.write per stampare messaggi all'interno del ciclo tqdm senza rovinare la barra
             tqdm.tqdm.write(f"Errore durante la rasterizzazione di {sar_filename} (cercato GeoJSON: {geojson_filename}): {e}")
             continue
 
