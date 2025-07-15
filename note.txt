@@ -3,3 +3,6 @@ Prima di iniziare a lavorare, ricorda di attivare ogni volta l'ambiente virtuale
 source ./.venv/bin/activate
 
 Una volta eseguito il comando, sarà attivato l'ambiente virtuale Python con cui lavorare,
+
+
+IMPORTANTE: nei modelli da 0 a 7 mi sono accorto che ho sempre utilizzato dei valori non corretti per MEAN e STD, quindi tutti gli addestramenti fatti finora non sono effettivi. Gli addestramenti dall'8 in poi ripeteranno tutti i primi 7, stavolta con i valori corretti.
