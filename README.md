@@ -41,5 +41,3 @@ Verificare l'efficienza del modello migliore sul test set, facendo una tabella c
 - accuracy
 
 Realizzare infine la matrice di confusione.
-
-Nel corso del progetto salvare tutti i dati di training/pesi/grafici che devono poi essere mostrati all'esame.
