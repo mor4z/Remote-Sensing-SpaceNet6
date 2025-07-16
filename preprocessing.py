@@ -11,12 +11,8 @@ import rasterio
 import geojson
 from PIL import Image, ImageDraw
 
-
+# Funzione di preprocessamento delle immagini che rasterizza i file GeoJSON in maschere binarie e le inserisce nella cartella 'rasterized_masks'.
 def preprocess_spacenet6_data(base_data_path):
-    """
-    Pre-processamento dei dati rasterizzando i file GeoJSON in maschere binarie.
-    Le maschere rasterizzate verranno salvate dentro 'rasterized_masks' all'interno di base_data_path.
-    """
     sar_intensity_dir = os.path.join(base_data_path, 'SAR-Intensity')
     geojson_buildings_dir = os.path.join(base_data_path, 'geojson_buildings')
     output_masks_dir = os.path.join(base_data_path, 'rasterized_masks')
@@ -24,7 +20,7 @@ def preprocess_spacenet6_data(base_data_path):
     # Controlla l'esistenza della cartella di output e la crea se necessario
     if not os.path.isdir(output_masks_dir):
         print(f"La cartella di output delle maschere '{output_masks_dir}' non esiste. La sto creando...")
-        os.makedirs(output_masks_dir, exist_ok=True) # Aggiungi exist_ok=True per evitare errori se esistesse già
+        os.makedirs(output_masks_dir, exist_ok=True) 
     else:
         print(f"La cartella di output per le maschere rasterizzate è: {output_masks_dir}")
 
@@ -45,7 +41,7 @@ def preprocess_spacenet6_data(base_data_path):
         if '_SAR-Intensity' in sar_base_name:
             geojson_base_name = sar_base_name.replace('_SAR-Intensity', '_Buildings')
         else:
-            geojson_base_name = sar_base_name + '_Buildings' # Esempio: aggiunge _Buildings se non trova SAR-Intensity
+            geojson_base_name = sar_base_name + '_Buildings' 
            
 
         geojson_filename = f"{geojson_base_name}.geojson"
@@ -56,7 +52,6 @@ def preprocess_spacenet6_data(base_data_path):
 
        
         try:
-            # Apre l'immagine SAR per ottenere le sue proprietà georeferenziate
             with rasterio.open(sar_path) as src:
                 out_shape = src.shape
                 out_transform = src.transform
@@ -65,10 +60,9 @@ def preprocess_spacenet6_data(base_data_path):
             # Verifica se il file GeoJSON esiste
             if not os.path.exists(geojson_path):
                 tqdm.tqdm.write(f"Skipping {sar_filename}: GeoJSON file not found at {geojson_path}")
-                continue # Salta questo file e passa al successivo
+                continue 
 
             geometries = []
-            # Apre il file GeoJSON con fiona
             with fiona.open(geojson_path, 'r') as collection:
                 for feature in collection:
                     if feature['geometry']: # Assicurati che la feature abbia una geometria
@@ -79,8 +73,8 @@ def preprocess_spacenet6_data(base_data_path):
                 geometries,
                 out_shape=out_shape,
                 transform=out_transform,
-                fill=0, # Valore per il background (nero)
-                all_touched=False, # Imposta su True se vuoi che tutti i pixel toccati dal bordo siano inclusi
+                fill=0, 
+                all_touched=False, 
                 dtype=np.uint8 # Tipo di dato per la maschera (0-255)
             )
 
@@ -91,20 +85,20 @@ def preprocess_spacenet6_data(base_data_path):
                 'width': out_shape[1],
                 'count': 1, # Un singolo canale per la maschera binaria
                 'dtype': 'uint8',
-                'crs': out_crs, # Mantieni lo stesso CRS dell'immagine SAR
+                'crs': out_crs, # Mantieni lo stesso CRS (Coordinate Reference System) dell'immagine SAR
                 'transform': out_transform, # Mantieni la stessa trasformazione dell'immagine SAR
                 'compress': 'lzw' # Compressione per ridurre la dimensione del file
             }
             
             # Salva la maschera rasterizzata
             with rasterio.open(output_mask_path, 'w', **profile) as dst:
-                dst.write(mask, 1) # Scrivi la maschera nel primo canale
+                dst.write(mask, 1) 
 
         except Exception as e:
             tqdm.tqdm.write(f"Errore durante la rasterizzazione di {sar_filename} (cercato GeoJSON: {geojson_filename}): {e}")
             continue
 
-    print("\nRasterizzazione completata!") # Stampa un messaggio finale dopo la barra di progresso
+    print("\nRasterizzazione completata!")
 
 
 # Altro processo per la realizzazione delle maschere

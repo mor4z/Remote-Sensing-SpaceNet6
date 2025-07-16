@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF # Per il resize in caso di problemi di dimensioni
 
+# Prese dal video di riferimento sulla UNET   
 class DoubleConv(nn.Module):
     # Blocco di doppia convoluzione con BatchNorm e ReLU usato nella U-Net.
-
     def __init__(self, in_channels, out_channels):
         super(DoubleConv, self).__init__()
         self.conv = nn.Sequential(

@@ -7,7 +7,6 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 class SpaceNet6Dataset(data.Dataset):
-
     def __init__(self,
                 root_dir = None, 
                 split = "train",
@@ -22,6 +21,7 @@ class SpaceNet6Dataset(data.Dataset):
         self.lbl_dir = []
         self.msk_dir = []
 
+        
         split_file = open(os.path.join(root_dir,f"{split}.txt"), "r")
         for line in split_file:
             self.img_dir.append(line.strip())

@@ -27,7 +27,6 @@ def set_seed(seed):
     print(f"Seed impostato su {seed} per la riproducibilità.")
 
 
-# Don't start the training process without checking CUDA availability
 def set_cuda_and_seed():
     if torch.cuda.is_available():
         device = torch.device('cuda')
@@ -37,11 +36,11 @@ def set_cuda_and_seed():
     print('Using PyTorch version:', torch.__version__, ' Device:', device)
     if device != torch.device('cuda'):
         sys.exit("CUDA not available.  Exiting.")
-    set_seed(42) # Set the seed to 42, which is the answer to everything
+    set_seed(42) # Imposta il seed per la riproducibilità
     return device
 
 
-# Get the mean and standard deviation of the dataset for normalization transforms
+# Funzione per calcolare la media e la deviazione standard delle immagini in un dataset
 def get_mean_std(path_to_train_data):
     mean = np.zeros(3)
     std = np.zeros(3)
@@ -74,8 +73,8 @@ def get_mean_std(path_to_train_data):
 
     return mean, std
 
+# Funzione che stampa l'immagine e la maschera
 def visualize_image(image, mask, prediction = None, save_path = None):
-    # Funzione che stampa l'immagine e la maschera
     image = np.array(image).transpose(1,2,0)
     mask = np.array(mask).squeeze()
     plt.figure(figsize=(10, 10))
@@ -110,8 +109,8 @@ def set_seed(seed):
     np.random.seed(seed)
     random.seed(seed)
 
-def get_evals(data_loader, model, criterion, device, save_predictions=False, output_path=None):
-    # Funzione che calcola accuracy, precision, recall, e F1 score di un modello
+# Funzione che calcola accuracy, precision, recall, e F1 score di un modello
+def get_evals(data_loader, model, criterion, device, save_predictions=False, output_path=None):  
     true_positives = 0
     false_positives = 0
     false_negatives = 0

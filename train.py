@@ -13,7 +13,6 @@ def train(train_loader, model, optimizer, criterion, scaler, scheduler, device):
         # Sposta i dati sulla GPU
         data = data.to(device)
         mask = mask.to(device).squeeze(dim = 1)
-        # Scala i dati
         # Azzera i gradienti
         optimizer.zero_grad()
         

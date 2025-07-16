@@ -100,7 +100,7 @@ def compute_pixel_confusion_matrix(loader, model, device):
     all_preds = []
     all_targets = []
     with torch.no_grad():
-        for x, y in tqdm(loader, desc="Collecting pixels for confusion matrix"):
+        for x, y in tqdm(loader, desc="Calcolo della matrice di confusione..."):
             x = x.to(device)
             y = y.to(device)
 
@@ -123,7 +123,7 @@ def plot_pr_curve(loader, model, device, title='Precision-Recall Curve sul Test 
     all_probs = []
     all_targets = []
     with torch.no_grad():
-        for x, y in tqdm(loader, desc="Collecting probabilities for PR curve"):
+        for x, y in tqdm(loader, desc="Calcolo della curva Precision-Recall..."):
             x = x.to(device)
             y_flat = y.cpu().numpy().flatten()
 
@@ -148,3 +148,100 @@ def plot_pr_curve(loader, model, device, title='Precision-Recall Curve sul Test 
     plt.show()
 
     print(f"Precision-Recall AUC: {pr_auc:.4f}")
+
+# Stampa un grafico riassuntivo delle statistiche dei modelli
+def plot_model_stats_bar_chart(filepath="output/stats/riassunto_modelli.txt", output_dir="output/stats"):
+    if not os.path.exists(filepath):
+        print(f"Errore: Il file '{filepath}' non esiste. Impossibile generare il grafico.")
+        return
+
+    os.makedirs(output_dir, exist_ok=True)
+    
+    model_stats = {} # Dizionario per contenere le statistiche per ogni modello
+    current_run_id = None
+
+    print(f"Lettura del file '{filepath}' per generare il grafico delle statistiche...")
+
+    with open(filepath, 'r') as f:
+        for line_num, line in enumerate(f):
+            line = line.strip()
+
+            if line.startswith("# --- INIZIO RUN:"):
+                try:
+                    current_run_id = line.split(":")[-1].strip().replace(" ---", "")
+                except IndexError:
+                    print(f"Avviso: Formato 'INIZIO RUN' non valido alla riga {line_num + 1}: {line}")
+                    current_run_id = None
+                continue
+            
+            if line.startswith("Stats:") and current_run_id:
+                try:
+                    stats_str = line[len("Stats:"):].strip()
+                    parts = stats_str.split(',')
+                    
+                    stats_dict = {}
+                    for part in parts:
+                        if '=' in part:
+                            key, value = part.split('=', 1)
+                            key = key.strip() 
+                            value = value.strip() 
+                            try:
+                                stats_dict[key] = float(value) # Prova a convertire in float
+                            except ValueError:
+                                stats_dict[key] = value # Lascia come stringa se non è un numero
+                    
+                    model_stats[current_run_id] = stats_dict
+                except (ValueError, IndexError) as e:
+                    print(f"Avviso: Errore nel parsing della riga Stats alla riga {line_num + 1} per Run ID '{current_run_id}': {e} - {line}")
+                finally:
+                    current_run_id = None 
+
+    if not model_stats:
+        print("Nessuna statistica valida trovata nel file. Impossibile generare il grafico.")
+        return
+
+    # Estrai delle metriche di interesse
+    first_model_key = list(model_stats.keys())[0]
+    metrics = [key for key in model_stats[first_model_key].keys() if isinstance(model_stats[first_model_key][key], (int, float))]
+    
+    print(metrics)
+    
+    metrics_to_plot = ['TRAIN_LOSS', 'VAL_LOSS', 'BEST_F1', 'ACCURACY'] 
+    actual_metrics_to_plot = [m for m in metrics_to_plot if m in metrics]
+
+    if not actual_metrics_to_plot:
+        print("Nessuna metrica numerica valida da plottare trovata. Verificare il formato del file 'riassunto_modelli.txt'.")
+        return
+
+    # Preparazione dei dati per il grafico
+    model_names = list(model_stats.keys())
+    num_models = len(model_names)
+    num_metrics = len(actual_metrics_to_plot)
+
+    if num_models == 0 or num_metrics == 0:
+        print("Non ci sono dati sufficienti per generare il grafico.")
+        return
+
+    bar_width = 0.15 
+    spacing = 0.05 # 
+    index = np.arange(num_models) * (num_metrics * bar_width + spacing) 
+
+    plt.figure(figsize=(num_models * 2 + num_metrics * 1.5, 8)) 
+
+    # Genera le barre per ogni metrica
+    for i, metric in enumerate(actual_metrics_to_plot):
+        values = [model_stats[model_name].get(metric, 0.0) for model_name in model_names]
+        plt.bar(index + i * bar_width, values, bar_width, label=metric)
+
+    plt.xlabel('Modelli')
+    plt.ylabel('Valore della Metrica')
+    plt.title('Comparazione delle Performance dei Modelli (Statistiche di Test)')
+    plt.xticks(index + (num_metrics - 1) * bar_width / 2, model_names, rotation=45, ha='right')
+    plt.legend(title="Metriche")
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout() # Adatta il layout per evitare sovrapposizioni
+
+    plot_filename = os.path.join(output_dir, "grafico_riassuntivo.png")
+    plt.savefig(plot_filename)
+    print(f"Grafico delle statistiche salvato in: {plot_filename}")
+    plt.show()

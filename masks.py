@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 def create_masks(image_folder, geojson_folder):
-    # Creo la cartella "masks" de non dovesse esistere
+    # Creo la cartella "masks" se non dovesse esistere
     masks_folder = os.path.join(image_folder, '../masks')
     os.makedirs(masks_folder, exist_ok=True)
 
