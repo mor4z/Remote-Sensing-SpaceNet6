@@ -3,8 +3,6 @@ import os
 import torch.utils.data as data
 import rasterio
 
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 
 class SpaceNet6Dataset(data.Dataset):
     def __init__(self,
