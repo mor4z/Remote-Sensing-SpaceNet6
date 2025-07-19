@@ -2,5 +2,11 @@ Prima di iniziare a lavorare, ricorda di attivare ogni volta l'ambiente virtuale
 
 source ./.venv/bin/activate
 
-Una volta eseguito il comando, sarà attivato l'ambiente virtuale Python con cui lavorare,
+Una volta eseguito il comando, sarà attivato l'ambiente virtuale Python con cui lavorare.
+
+
+Motivo per cui il mio modello non supera l'F1-score di 0.73:
+il Validation Set è alquanto sbilanciato, su 340 immagini, 77 non hanno edifici (il 22%), quindi le loro maschere risultano essere completamente nere. Questo facilita il mio modello nelle predizioni sul background, in quanto il mio modello fatica nel riconoscere precisamente i bordi degli edifici e tende a segnarli come sfondo. Questo fa sì che poi il mio modello si abitua a predire più facilmente i background rispetto all'elemento da segmentare.
+
+il Test Set è più bilanciato in quanto su 340 immagini solamenti 41 non hanno edifici e questo ricalca ancora di più quanto detto sul fatto che il mio modello tende a predire background, infatti ha una percentuale più bassa di immagini senza edifici il test set.
 
